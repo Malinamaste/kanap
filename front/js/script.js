@@ -23,17 +23,18 @@ fetch("http://localhost:3000/api/products")
     Fonction d'affichage des produits de l'API sur la page index
 --------------------------------------------------------------------*/
 function displayKanaps(index) {
-  // variable qui contient la section#items > article
+  // variable relative à la section#items (DOM)
   let sectionKanap = document.getElementById('items');
   // boucle pour chaque article > section#items de la page index
   for (let article of index) {
     // création et ajout des zones d'articles
-    sectionKanap.innerHTML += `<a href="./product.html?_id=${article._id}">
-   <article>
-     <img src="${article.imageUrl}" alt="${article.altTxt}">
-     <h3 class="productName">${article.name}</h3>
-     <p class="productDescription">${article.description}</p>
-   </article>
-  </a>`;
+    sectionKanap.innerHTML += //innerHTML injecte le nouveau contenu
+    `<a href="./product.html?_id=${article._id}">
+        <article>
+            <img src="${article.imageUrl}" alt="${article.altTxt}">
+            <h3 class="productName">${article.name}</h3>
+            <p class="productDescription">${article.description}</p>
+        </article>
+    </a>`;
   }
 }
