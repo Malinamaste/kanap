@@ -1,10 +1,8 @@
 main()
-
 /*-------------------------------------------------------------------
     Création d'une fonction main() qui contient le code de base
             et s'execute dès le chargement de la page
 --------------------------------------------------------------------*/
-
 async function main() {
     // on récupère les produits
     const products = await getProducts()
@@ -15,12 +13,10 @@ async function main() {
         displayProduct(product)
     }
 }
-
 /*-------------------------------------------------------------------
     Création d'une fonction qui fait office de première requête
         pour récupérer les données des produits sur l'API
 --------------------------------------------------------------------*/
-
 function getProducts() {
     return fetch("http://localhost:3000/api/products")
         // récupération du résultat de la requête au format json (Promise)
@@ -37,11 +33,9 @@ function getProducts() {
             alert(error)
         })
 }
-
 /*---------------------------------------------------------------------------------
     Création d'une fonction d'affichage d'un produit de l'API sur la page index
 ----------------------------------------------------------------------------------*/
-
 function displayProduct(product) {
     //.innerHTML injecte le nouveau contenu
     document.getElementById('items').innerHTML += 
