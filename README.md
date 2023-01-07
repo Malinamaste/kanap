@@ -4,6 +4,7 @@ Cinquième projet du parcours "Développeur Web" chez Openclassrooms. L'objectif
 
 # Objectifs
 a) Construire un site e-commerce fonctionnel
+
 b) Dynamiser une maquette grâce à javascript
 
 # Livrables

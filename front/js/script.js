@@ -20,26 +20,27 @@ async function main() {
 function getProducts() {
     return fetch("http://localhost:3000/api/products")
         // récupération du résultat de la requête au format json (Promise)
-        .then(function(httpBodyResponse) {
+        .then(function (httpBodyResponse) {
             return httpBodyResponse.json()
         })
         // on retourne et récupère la vraie valeur du résultat json précédent (Promise)
-        .then(function(products) {
+        .then(function (products) {
             //console.log(products)
             return products
         })
         // au cas où l'API serait down
-        .catch(function(error) {
+        .catch(function (error) {
             alert(error)
         })
 }
-/*---------------------------------------------------------------------------------
-    Création d'une fonction d'affichage d'un produit de l'API sur la page index
-----------------------------------------------------------------------------------*/
+/*------------------------------------------------------
+    Création d'une fonction d'affichage d'un produit
+            de l'API sur la page index
+-------------------------------------------------------*/
 function displayProduct(product) {
     //.innerHTML injecte le nouveau contenu
-    document.getElementById('items').innerHTML += 
-    `<a href="./product.html?_id=${product._id}">
+    document.getElementById('items').innerHTML +=
+        `<a href="./product.html?_id=${product._id}">
         <article>
             <img src="${product.imageUrl}" alt="${product.altTxt}">
             <h3 class="productName">${product.name}</h3>
