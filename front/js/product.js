@@ -1,7 +1,7 @@
 /*-----------------------------------------------
     Création d'une fonction async auto-appelée
 ------------------------------------------------*/
-(function() {
+(function () {
     // on récupère d'abord l'id du produit dans l'url
     const productId = getProductId()
     console.log(productId)
@@ -11,7 +11,7 @@
     displayProduct(product)
 })()
 /*------------------------------------------------------------
-    Création de la fonction qui récupère l'id du produit
+    Creation de la fonction qui recupere l'id du produit
 -------------------------------------------------------------*/
 function getProductId() {
     return new URL(location.href).searchParams.get('_id')
