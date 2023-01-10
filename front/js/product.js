@@ -4,10 +4,10 @@
 (async function () {
     // on récupère d'abord l'id du produit dans l'url
     const productId = getProductId()
-    console.log(productId)
+    //console.log(productId)
     // on récupère le produit grâce à l'id
     const product = await getProduct(productId)
-    console.log(product)
+    //console.log(product)
     // puis on l'affiche
     displayProduct(product)
 })()
@@ -17,9 +17,10 @@
 function getProductId() {
     return new URL(location.href).searchParams.get('_id')
 }
-/*---------------------------------------------------------------
-    Création de la fonction qui récupère le produit via l'id
-----------------------------------------------------------------*/
+/*--------------------------------------------------------
+    Création de la fonction qui récupère le produit
+        au sein de l'API via son id
+---------------------------------------------------------*/
 function getProduct(productId) {
     return fetch(`http://localhost:3000/api/products/${productId}`)
         .then(function (httpBodyResponse) {
@@ -47,4 +48,29 @@ function displayProduct(product) {
     for (let color of product.colors) {
         colorOption.innerHTML += `<option value="${color}">${color}</option>`
     }
+}
+/*---------------------------------------------------------------------
+    Création de la fonction qui ajoute les produits dans le panier
+----------------------------------------------------------------------*/
+function addToCart() {
+    const button = document.getElementById('addToCart')
+
+    button.addEventListener("click", () => {
+        const color = document.getElementById('colors').value
+        const qty = document.getElementById('quantity').value
+        const id = urlParams.get('id')
+
+        if (
+            color == undefined ||
+            color === "" ||
+            qty < 1 ||
+            qty > 100 ||
+            qty === undefined
+        ) {
+            alert(`Veuillez sélectionner une couleur et/ou une quantité.`);
+        } else {
+            localStorage.setItem(id, color, qty)
+            document.getElementById('addToCart').textContent = 'Produit ajouté au panier';
+        }
+    })
 }
