@@ -10,6 +10,7 @@
     //console.log(product)
     // puis on l'affiche
     displayProduct(product)
+    addToCart()
 })()
 /*------------------------------------------------------------
     Creation de la fonction qui récupère l'id du produit
@@ -50,7 +51,7 @@ function displayProduct(product) {
     }
 }
 /*---------------------------------------------------------------------
-    Création de la fonction qui ajoute les produits dans le panier
+        Création de la fonction d'ajout de produits au panier
 ----------------------------------------------------------------------*/
 function addToCart() {
     const button = document.getElementById('addToCart')
@@ -58,7 +59,12 @@ function addToCart() {
     button.addEventListener("click", () => {
         const color = document.getElementById('colors').value
         const qty = document.getElementById('quantity').value
-        const id = urlParams.get('id')
+        const id = getProductId()
+        const handleData = {
+            id: id,
+            color: color,
+            quantity: qty
+        }
 
         if (
             color == undefined ||
@@ -69,8 +75,9 @@ function addToCart() {
         ) {
             alert(`Veuillez sélectionner une couleur et/ou une quantité.`);
         } else {
-            localStorage.setItem(id, color, qty)
+            localStorage.setItem(id, JSON.stringify(handleData))
             document.getElementById('addToCart').textContent = 'Produit ajouté au panier';
+            //window.location.href = "cart.html"
         }
     })
 }
