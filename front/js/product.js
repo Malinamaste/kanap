@@ -2,13 +2,13 @@
     Création d'une fonction async auto-appelée
 ------------------------------------------------*/
 (async function () {
-    // on récupère d'abord l'id du produit dans l'url
+    // On récupère d'abord l'id du produit dans l'url
     const productId = getProductId()
     //console.log(productId)
-    // on récupère le produit grâce à l'id
+    // On récupère le produit grâce à l'id
     const product = await getProduct(productId)
     //console.log(product)
-    // puis on l'affiche
+    // Puis on l'affiche
     displayProduct(product)
     addToCart()
 })()
@@ -45,7 +45,7 @@ function displayProduct(product) {
     document.getElementById('title').textContent = product.name
     document.getElementById('price').textContent = product.price
     document.getElementById('description').textContent = product.description
-    // on boucle pour le choix des couleurs
+    // On boucle pour le choix des couleurs
     for (let color of product.colors) {
         colorOption.innerHTML += `<option value="${color}">${color}</option>`
     }
@@ -60,24 +60,48 @@ function addToCart() {
         const color = document.getElementById('colors').value
         const qty = document.getElementById('quantity').value
         const id = getProductId()
-        const handleData = {
-            id: id,
-            color: color,
-            quantity: qty
-        }
 
-        if (
-            color == undefined ||
-            color === "" ||
-            qty < 1 ||
-            qty > 100 ||
-            qty === undefined
-        ) {
+        if (color == undefined || color === "" || qty < 1 || qty > 100 || qty === undefined) {
             alert(`Veuillez sélectionner une couleur et/ou une quantité.`);
         } else {
-            localStorage.setItem(id, JSON.stringify(handleData))
-            document.getElementById('addToCart').textContent = 'Produit ajouté au panier';
-            //window.location.href = "cart.html"
+            // on stocke les valeurs du produit choisit dans un objet
+            let choosenProduct = {
+                id: id,
+                color: color,
+                quantity: parseInt(qty, 10),
+            }
+            //console.log(choosenProduct)
+
+            // on déclare une variable contenant le LS
+            let localStorageProducts = JSON.parse(localStorage.getItem("basket"));
+
+            // on vérifie si le basket existe  déjà dans le LS
+            if (localStorageProducts) {
+                // on vérifie avec .find() si l'id et la couleur d'un article sont déjà présents et égaux
+                let item = localStorageProducts.find(
+                    (item) =>
+                        item.id == choosenProduct.id && item.color == choosenProduct.color
+                );
+                // SI OUI > on ajoute la nouvelle quantité à l'ancienne
+                if (item) {
+                    item.quantity = item.quantity + choosenProduct.quantity;
+                    //item.totalPrice += item.price * choosenProduct.quantity;
+                    //console.log(item.totalPrice);
+                    //console.log(item.quantity);
+                    localStorage.setItem("basket", JSON.stringify(localStorageProducts));
+                    return;
+                }
+                // si le produit n'existe pas déjà dans le LS on le push
+                localStorageProducts.push(choosenProduct);
+                localStorage.setItem("basket", JSON.stringify(localStorageProducts));
+            } else {
+                //  sinon on crée un tableau dans lequel on push choosenProduct
+                let newTabLocalStorage = [];
+                newTabLocalStorage.push(choosenProduct);
+                localStorage.setItem("basket", JSON.stringify(newTabLocalStorage));
+            }
         }
+        //document.getElementById('addToCart').textContent = 'Produit ajouté au panier';
+        //window.location.href = "cart.html"*/
     })
 }
