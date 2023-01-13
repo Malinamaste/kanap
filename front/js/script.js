@@ -38,7 +38,7 @@ function getProducts() {
             de l'API sur la page index
 -------------------------------------------------------*/
 function displayProduct(product) {
-    //.innerHTML injecte le nouveau contenu
+    //.innerHTML injecte le nouveau contenu dans le DOM
     document.getElementById('items').innerHTML +=
         `<a href="./product.html?_id=${product._id}">
         <article>
