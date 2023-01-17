@@ -97,14 +97,14 @@ function addToCart(product) {
         );
         // SI OUI > on ajoute la nouvelle quantité à l'ancienne
         if (item) {
-          let newItemQuantity = item.quantity;
-          item.quantity = item.quantity + choosenProduct.quantity;
-          console.log(newItemQuantity)
+          const newItemQty = item.quantity + choosenProduct.quantity;
+          console.log(newItemQty)
 
-          if (newItemQuantity === 100) {
-            alert('Vous ne pouvez pas commander plus de 100 exemplaires.')
-            return
+          if (newItemQty > 100) {
+            return alert('Vous ne pouvez pas commander plus de 100 exemplaires.')
           }
+
+          item.quantity = newItemQty;
 
           localStorage.setItem("basket", JSON.stringify(localStorageBasket));
           return;
