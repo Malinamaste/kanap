@@ -101,17 +101,10 @@ function addToCart(product) {
                     //item.totalPrice += item.price * choosenProduct.quantity;
                     //console.log(item.totalPrice);
                     console.log(item.quantity);
+
                     localStorage.setItem("basket", JSON.stringify(localStorageBasket));
                     return;
-                    /*while (item.quantity + choosenProduct.quantity <= 100 && item.color === choosenProduct.color) {
-                        item.quantity = item.quantity + choosenProduct.quantity;
-                        //item.totalPrice += item.price * choosenProduct.quantity;
-                        //console.log(item.totalPrice);
-                        console.log(item.quantity);
-                    }*/
-                } /*else {
-                    alert('Vous ne pouvez pas commander plus de 100 exemplaires de ce modèle.')
-                }*/
+                }
                 // si le produit n'existe pas déjà dans le LS on le push
                 localStorageBasket.push(choosenProduct);
                 localStorage.setItem("basket", JSON.stringify(localStorageBasket));
