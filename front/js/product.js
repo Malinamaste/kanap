@@ -76,13 +76,13 @@ function addToCart(product) {
             // on stocke les valeurs du produit choisit dans un objet
             let choosenProduct = {
                 id: id,
-                name: product.name,
-                img: product.imageUrl,
-                altTxt: product.altTxt,
+                //name: product.name,
+                //img: product.imageUrl,
+                //altTxt: product.altTxt,
                 color: color,
                 quantity: parseInt(qty, 10),
-                price: product.price,
-                totalPrice: product.price * parseInt(qty, 10)
+                //price: product.price,
+                //totalPrice: product.price * parseInt(qty, 10)
             }
             //console.log(choosenProduct)
 
@@ -98,12 +98,20 @@ function addToCart(product) {
                 // SI OUI > on ajoute la nouvelle quantité à l'ancienne
                 if (item) {
                     item.quantity = item.quantity + choosenProduct.quantity;
-                    item.totalPrice += item.price * choosenProduct.quantity;
+                    //item.totalPrice += item.price * choosenProduct.quantity;
                     //console.log(item.totalPrice);
-                    //console.log(item.quantity);
+                    console.log(item.quantity);
                     localStorage.setItem("basket", JSON.stringify(localStorageBasket));
                     return;
-                }
+                    /*while (item.quantity + choosenProduct.quantity <= 100 && item.color === choosenProduct.color) {
+                        item.quantity = item.quantity + choosenProduct.quantity;
+                        //item.totalPrice += item.price * choosenProduct.quantity;
+                        //console.log(item.totalPrice);
+                        console.log(item.quantity);
+                    }*/
+                } /*else {
+                    alert('Vous ne pouvez pas commander plus de 100 exemplaires de ce modèle.')
+                }*/
                 // si le produit n'existe pas déjà dans le LS on le push
                 localStorageBasket.push(choosenProduct);
                 localStorage.setItem("basket", JSON.stringify(localStorageBasket));
