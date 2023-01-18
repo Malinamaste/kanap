@@ -76,13 +76,13 @@ function addToCart(product) {
             // on stocke les valeurs du produit choisit dans un objet
             let choosenProduct = {
                 id: id,
-                //name: product.name,
-                //img: product.imageUrl,
+                name: product.name,
+                img: product.imageUrl,
                 //altTxt: product.altTxt,
                 color: color,
                 quantity: parseInt(qty, 10),
-                //price: product.price,
-                //totalPrice: product.price * parseInt(qty, 10)
+                price: product.price,
+                totalPrice: product.price * parseInt(qty, 10)
             }
             //console.log(choosenProduct)
 
@@ -99,11 +99,11 @@ function addToCart(product) {
                 if (item) {
                     const newItemQty = item.quantity + choosenProduct.quantity;
                     console.log(newItemQty)
-
+                    // SI l'addition dépasse 100 ça ne marche pas et on alerte l'utilisateur
                     if (newItemQty > 100) {
                         return alert('Vous ne pouvez pas commander plus de 100 exemplaires.')
                     }
-
+                    // et on réassigne item.quantity seulement si ça ne dépasse pas 100
                     item.quantity = newItemQty;
 
                     localStorage.setItem("basket", JSON.stringify(localStorageBasket));
