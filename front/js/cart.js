@@ -2,7 +2,7 @@
 let basket = JSON.parse(localStorage.getItem("basket"));
 //console.log(basket)
 
-displayBasket(basket)
+displayBasket(basket);
 /*-----------------------------------------------------------------------
     Création de la fonction qui affiche le(s) produit(s) sur la page
 ------------------------------------------------------------------------*/
@@ -39,18 +39,18 @@ function displayBasket(basket) {
         </article>`
 
       // on crée un tableau pour récupérer les ID de chaque product
-      let itemsId = []
+      let itemsId = [];
       // et on push les infos dedans
       itemsId.push(product.id);
       console.log(itemsId);
     }
     // on affiche la quantité totale grâce à la fonction totalQuantity()
-    document.getElementById('totalQuantity').innerHTML = totalQuantity()
+    document.getElementById('totalQuantity').innerHTML = totalQuantity();
     // on affiche le prix total grâce à la fonction totalPrice()
-    document.getElementById('totalPrice').innerHTML = totalPrice()
+    document.getElementById('totalPrice').innerHTML = totalPrice();
 
     // on met à jour le LS avec la fonction adéquate
-    updateLocalStorage()
+    updateLocalStorage();
   }
 }
 /*-------------------------------------------------------
@@ -93,16 +93,18 @@ function updateLocalStorage() {
       Création de la fonction qui ajoute des articles
 ----------------------------------------------------------*/
 function addProducts() {
-  let itemQuantity = Array.from(document.querySelectorAll('.itemQuantity'))
+  let itemQuantity = Array.from(document.querySelectorAll('.itemQuantity'));
   console.log(itemQuantity)
   let totalSum = Array.from(document.querySelectorAll("#totalPrice"));
   console.log(totalSum)
   let screenQuantity = Array.from(document.querySelectorAll("#totalQuantity"));
   console.log(screenQuantity)
 
+  let basketAddControl = [];
+
   itemQuantity.forEach(function (quantity, i) {
-    quantity.addEventListener("change", (event) => {
-      event.preventDefault();
+    quantity.addEventListener('change', (e) => {
+      e.preventDefault();
       let newArticlePrice = quantity.value * basket[i].price;
       console.log(quantity.value);
 
@@ -112,14 +114,16 @@ function addProducts() {
       totalSum[i].textContent = newArticlePrice;
       basket[i].totalPrice = newArticlePrice;
 
-      //console.log(`le prix de ${basket[i].name} et passé à ${newArticlePrice}`);
+      basketAddControl.push(newArticlePrice);
+      basketAddControl = basket;
+      basket = localStorage.setItem("basket", JSON.stringify(basketAddControl));
 
-      totalQuantity();
-      totalPrice();
+      //totalQuantity();
+      //totalPrice();
     });
   });
 }
-addProducts()
+addProducts();
 /*----------------------------------------------------------
       Création de la fonction qui supprime des articles
 ----------------------------------------------------------*/
@@ -152,4 +156,143 @@ function deleteProducts() {
     });
   }
 }
-deleteProducts()
+deleteProducts();
+/*---------------------------------------
+          GESTION DU FORMULAIRE
+---------------------------------------*/
+// on vient cibler le btn commander du formulaire
+const orderBtn = document.getElementById('order');
+//console.log(orderBtn)
+
+// on écoute l'event au click de orderBtn pour contrôler, récupérer les informations et les envoyer plus tard
+orderBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+
+  // on crée un objet qui stocke les données entrées par l'utilisateur
+  let contact = {
+    firstName: document.getElementById('firstName').value,
+    lastName: document.getElementById('lastName').value,
+    address: document.getElementById('address').value,
+    city: document.getElementById('city').value,
+    email: document.getElementById('email').value
+  };
+  console.log(contact)
+
+  // REGEX pour contrôler la validité des champs firstName + lastName
+  const regNamesAndCity = (value) => {
+    return /^[A-Za-z][A-Za-z\é\è\ê\ë\ï\œ\-\s]+$/.test(value);
+  };
+
+  // REGEX pour contrôler la validité du champ address
+  const regAddress = (value) => {
+    return /^[a-zA-Z0-9.,-_ ]{5,50}[ ]{0,2}$/.test(value);
+  };
+
+  // REGEX pour contrôler la validité du champ email
+  const regEmail = (value) => {
+    return /^[_a-z0-9-]+(.[_a-z0-9-]+)*@[a-z0-9-]+(.[a-z0-9-]+)*(.[a-z]{2,4})$/.test(value);
+  }
+
+  function controlFirstName() {
+    // on récupère la valeur de l'input
+    const firstName = contact.firstName;
+    // on cible l'input afin de changer son apparence
+    let inputFirstName = document.getElementById('firstName');
+    // si firstName répond aux attentes OK...sinon ERROR
+    if (regNamesAndCity(firstName)) {
+      inputFirstName.style.backgroundColor = "green";
+      document.getElementById('firstNameErrorMsg').textContent = "";
+      return true;
+    } else {
+      inputFirstName.style.backgroundColor = "red";
+      document.getElementById('firstNameErrorMsg').textContent = "Champ invalide. Ex: Mélanie";
+      return false;
+    }
+  }
+
+  function controlLastName() {
+    // on récupère la valeur de l'input
+    const lastName = contact.lastName;
+    // on cible l'input afin de changer son apparence
+    let inputLastName = document.getElementById('lastName');
+    // si lastName répond aux attentes OK...sinon ERROR
+    if (regNamesAndCity(lastName)) {
+      inputLastName.style.backgroundColor = "green";
+      document.getElementById('lastNameErrorMsg').textContent = "";
+      return true;
+    } else {
+      inputLastName.style.backgroundColor = 'red';
+      document.getElementById('lastNameErrorMsg').textContent = "Champ invalide. Ex: Morey";
+      return false;
+    }
+  }
+
+  function controlAddress() {
+    // on récupère la valeur de l'input
+    const address = contact.address;
+    // on cible l'input afin de changer son apparence
+    let inputAddress = document.getElementById('address');
+    // si address répond aux attentes OK...sinon ERROR
+    if (regAddress(address)) {
+      inputAddress.style.backgroundColor = "green";
+      document.getElementById('addressErrorMsg').textContent = "";
+      return true;
+    } else {
+      inputAddress.style.backgroundColor = 'red';
+      document.getElementById('addressErrorMsg').textContent = "Champ invalide. Ex: 44 avenue Montblanc";
+      return false;
+    }
+  }
+
+  function controlCity() {
+    // on récupère la valeur de l'input
+    const city = contact.city;
+    // on cible l'input afin de changer son apparence
+    let inputCity = document.getElementById('city');
+    // si city répond aux attentes OK...sinon ERROR
+    if (regNamesAndCity(city)) {
+      inputCity.style.backgroundColor = "green";
+      document.getElementById('cityErrorMsg').textContent = "";
+      return true;
+    } else {
+      inputCity.style.backgroundColor = 'red';
+      document.getElementById('cityErrorMsg').textContent = "Champ invalide. Ex: Lyon";
+      return false;
+    }
+  }
+
+  function controlEmail() {
+    // on récupère la valeur de l'input
+    const email = contact.email;
+    // on cible l'input afin de changer son apparence
+    let inputEmail = document.getElementById('email');
+    // si email répond aux attentes OK...sinon ERROR
+    if (regEmail(email)) {
+      inputEmail.style.backgroundColor = "green";
+      document.getElementById('emailErrorMsg').textContent = "";
+      return true;
+    } else {
+      inputEmail.style.backgroundColor = "red";
+      document.getElementById('emailErrorMsg').textContent = "Champ invalide. Ex: johndoe@contact.com";
+      return false;
+    }
+  }
+
+  // on vérifie que le panier n'est pas vide et la validité du formulaire afin de stocker les données de l'utilisateur dans le LS
+  if (
+    basket.length > 0 &&
+    controlFirstName() &&
+    controlLastName() &&
+    controlAddress() &&
+    controlCity() &&
+    controlEmail()
+  ) {
+    // on enregistre le formulaire dans le LS
+    localStorage.setItem('contact', JSON.stringify(contact));
+    // on modifie le btn commander pour informer l'utilisateur que tout est bon
+    orderBtn.value = "Okay";
+    sendToServer();
+  } else {
+    alert('Formulaire incorrect');
+  }
+});
