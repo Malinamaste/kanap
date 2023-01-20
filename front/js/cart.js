@@ -283,7 +283,6 @@ orderBtn.addEventListener('click', (e) => {
 
   // on vérifie que le panier n'est pas vide et la validité du formulaire afin de stocker les données de l'utilisateur dans le LS
   if (
-    basket.length > 0 &&
     controlFirstName() &&
     controlLastName() &&
     controlAddress() &&
@@ -292,9 +291,7 @@ orderBtn.addEventListener('click', (e) => {
   ) {
     // on enregistre le formulaire dans le LS
     localStorage.setItem('contact', JSON.stringify(contact));
-    // on modifie le btn commander pour informer l'utilisateur que tout est bon
-    orderBtn.value = "Commande passée!";
-    // Appel de la fonction qui envoie les données au server
+    // on appelle la fonction qui envoie les données au serveur
     sendToServer();
   } else {
     // si toutes les conditions ne sont pas remplies on alerte l'utilisateur
@@ -303,14 +300,14 @@ orderBtn.addEventListener('click', (e) => {
   /*----------------------------------------------------------------
       Création de la fonction qui envoie les données au serveur
   ----------------------------------------------------------------*/
-  function sendToServer(orderId) {
-    const serverToServer =
+  function sendToServer() {
+    const sendToServer =
       fetch('http://localhost:3000/api/products/order', {
         method: 'POST',
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ contact, itemsId }),
+        body: JSON.stringify({ contact, basket }),
       })
         // on récupère et stock la réponse de l'API (orderId)
         .then((response) => {
