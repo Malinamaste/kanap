@@ -5,6 +5,8 @@ let basket = JSON.parse(localStorage.getItem("basket"));
 // on crée un tableau pour récupérer les ID de chaque product du basket
 let itemsId = [];
 
+let orderId = "";
+
 displayBasket(basket);
 /*-----------------------------------------------------------------------
     Création de la fonction qui affiche le(s) produit(s) sur la page
@@ -307,7 +309,7 @@ orderBtn.addEventListener('click', (e) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ contact, basket }),
+        body: JSON.stringify({ contact, products }),
       })
         // on récupère et stock la réponse de l'API (orderId)
         .then((response) => {
@@ -319,7 +321,7 @@ orderBtn.addEventListener('click', (e) => {
         });
     // si orderId n'est pas une chaîne de caractère vide, on redirige l'utilisateur
     if (orderId != "") {
-      //location.href = 'confirmation.html?id=' + orderId;
+      location.href = 'confirmation.html?id=' + orderId;
     }
   }
 });
