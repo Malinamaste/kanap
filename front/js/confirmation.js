@@ -8,15 +8,15 @@ function getProductId() {
 const orderId = getProductId();
 console.log(orderId);
 
-const basket = JSON.parse(localStorage.getItem('basket'));
-console.log(basket);
+//const basket = JSON.parse(localStorage.getItem('basket'));
+//console.log(basket);
 
 // on cible l'élément dans le DOM pour lui injecter plus tard une valeur
 const confirmation = document.getElementById('orderId');
 
 function displayOrderId() {
   // on affiche le numéro de commande
-  confirmation.innerHTML = '${orderId}';
+  confirmation.innerHTML = '</br>' + orderId;
 
   // et on termine en vidant le LS
   localStorage.clear();

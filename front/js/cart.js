@@ -3,7 +3,7 @@ let basket = JSON.parse(localStorage.getItem("basket"));
 //console.log(basket)
 
 // on crée un tableau pour récupérer les ID de chaque product du basket
-let itemsId = [];
+let products = [];
 
 let orderId = "";
 
@@ -43,11 +43,9 @@ function displayBasket(basket) {
           </div>
         </article>`
 
-      // on crée un tableau pour récupérer les ID de chaque product
-      //let itemsId = [];
-      // et on push les infos dedans
-      itemsId.push(product.id);
-      console.log(itemsId);
+      // on push les infos dans products[]
+      products.push(product.id);
+      console.log(products);
     }
     // on affiche la quantité totale grâce à la fonction totalQuantity()
     document.getElementById('totalQuantity').innerHTML = totalQuantity();
@@ -303,26 +301,25 @@ orderBtn.addEventListener('click', (e) => {
       Création de la fonction qui envoie les données au serveur
   ----------------------------------------------------------------*/
   function sendToServer() {
-    const sendToServer =
-      fetch('http://localhost:3000/api/products/order', {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ contact, products }),
+    fetch('http://localhost:3000/api/products/order', {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ contact, products }), // clefs contact et products
+    })
+      // on récupère et stock la réponse de l'API (orderId)
+      .then((response) => {
+        return response.json();
       })
-        // on récupère et stock la réponse de l'API (orderId)
-        .then((response) => {
-          return response.json();
-        })
-        .then((server) => {
-          orderId = server.orderId;
-          console.log(orderId);
-        });
-    // si orderId n'est pas une chaîne de caractère vide, on redirige l'utilisateur
-    if (orderId != "") {
-      location.href = 'confirmation.html?id=' + orderId;
-    }
+      .then((server) => {
+        const orderId = server.orderId;
+        console.log(orderId);
+        // si orderId n'est pas undefined on redirige l'utilisateur
+        if (orderId != undefined) {
+          location.href = 'confirmation.html?id=' + orderId;
+        }
+      });
   }
 });
 
