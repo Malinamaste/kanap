@@ -2,6 +2,9 @@
 let basket = JSON.parse(localStorage.getItem("basket"));
 //console.log(basket)
 
+// on crée un tableau pour récupérer les ID de chaque product du basket
+let itemsId = [];
+
 displayBasket(basket);
 /*-----------------------------------------------------------------------
     Création de la fonction qui affiche le(s) produit(s) sur la page
@@ -39,7 +42,7 @@ function displayBasket(basket) {
         </article>`
 
       // on crée un tableau pour récupérer les ID de chaque product
-      let itemsId = [];
+      //let itemsId = [];
       // et on push les infos dedans
       itemsId.push(product.id);
       console.log(itemsId);
@@ -176,7 +179,7 @@ orderBtn.addEventListener('click', (e) => {
     city: document.getElementById('city').value,
     email: document.getElementById('email').value
   };
-  console.log(contact)
+  //console.log(contact)
 
   // REGEX pour contrôler la validité des champs firstName + lastName
   const regNamesAndCity = (value) => {
@@ -290,9 +293,49 @@ orderBtn.addEventListener('click', (e) => {
     // on enregistre le formulaire dans le LS
     localStorage.setItem('contact', JSON.stringify(contact));
     // on modifie le btn commander pour informer l'utilisateur que tout est bon
-    orderBtn.value = "Okay";
+    orderBtn.value = "Commande passée!";
+    // Appel de la fonction qui envoie les données au server
     sendToServer();
   } else {
-    alert('Formulaire incorrect');
+    // si toutes les conditions ne sont pas remplies on alerte l'utilisateur
+    alert('Formulaire incorrect. Veuillez le remplir à nouveau.');
+  }
+  /*----------------------------------------------------------------
+      Création de la fonction qui envoie les données au serveur
+  ----------------------------------------------------------------*/
+  function sendToServer(orderId) {
+    const serverToServer =
+      fetch('http://localhost:3000/api/products/order', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ contact, itemsId }),
+      })
+        // on récupère et stock la réponse de l'API (orderId)
+        .then((response) => {
+          return response.json();
+        })
+        .then((server) => {
+          orderId = server.orderId;
+          console.log(orderId);
+        });
+    // si orderId n'est pas une chaîne de caractère vide, on redirige l'utilisateur
+    if (orderId != "") {
+      //location.href = 'confirmation.html?id=' + orderId;
+    }
   }
 });
+
+let formDatas = JSON.parse(localStorage.getItem('contact'));
+console.log(formDatas)
+
+if (formDatas) {
+  document.getElementById('firstName').value = formDatas.firstName;
+  document.getElementById('lastName').value = formDatas.lastName;
+  document.getElementById('address').value = formDatas.address;
+  document.getElementById('city').value = formDatas.city;
+  document.getElementById('email').value = formDatas.email;
+} else {
+  console.log('Le formulaire est vide!')
+}
