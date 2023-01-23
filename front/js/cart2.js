@@ -8,16 +8,7 @@ let products = [];
 // on crée une variable qui contiendra l'orderId de la future requête POST
 let orderId = "";
 
-// TRY
-async function getDatas() {
-  // on récupère les données des produits sur l'API
-  const response = await fetch('http://localhost:3000/api/products/');
-  // on convertit les données en objet JSON
-  const products = await response.json();
-  console.log(products)
-}
-// TRY
-
+// call de la fonction qui affiche le basket dans le DOM
 displayBasket(basket);
 /*-----------------------------------------------------------------------
     Création de la fonction qui affiche le(s) produit(s) sur la page
@@ -66,6 +57,8 @@ function displayBasket(basket) {
     // on met à jour le LS avec la fonction adéquate
     updateLocalStorage();
   }
+  addProducts();
+  deleteProducts();
 }
 /*-------------------------------------------------------
     Création de la fonction qui récupère les prix
@@ -141,7 +134,6 @@ function addProducts() {
     });
   }
 }
-addProducts();
 /*----------------------------------------------------------
       Création de la fonction qui supprime des articles
 ----------------------------------------------------------*/
@@ -174,7 +166,6 @@ function deleteProducts() {
     });
   }
 }
-deleteProducts();
 /*---------------------------------------
           GESTION DU FORMULAIRE
 ---------------------------------------*/
