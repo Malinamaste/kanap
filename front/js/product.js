@@ -81,10 +81,10 @@ function addToCart(product) {
                 //altTxt: product.altTxt,
                 color: color,
                 quantity: parseInt(qty, 10),
-                price: product.price,
-                totalPrice: product.price * parseInt(qty, 10)
+                //price: product.price,
+                //totalPrice: product.price * parseInt(qty, 10)
             }
-            //console.log(choosenProduct)
+            console.log(choosenProduct)
 
             // on déclare une variable contenant le LS
             let localStorageBasket = JSON.parse(localStorage.getItem("basket"));
