@@ -5,135 +5,148 @@ let basket = JSON.parse(localStorage.getItem("basket"));
 // on crée un tableau pour récupérer les ID de chaque product du basket
 let products = [];
 
+// on crée une variable qui contiendra l'orderId de la future requête POST
 let orderId = "";
 
-displayBasket(basket);
+// on récupère les données supplémentaires via l'API
+function getDatas(productId) {
+  response = fetch('http://localhost:3000/api/products/' + productId)
+    .then(data => {
+      return data.json();
+    });
+  //console.log(response)
+  return response;
+}
+
 /*-----------------------------------------------------------------------
     Création de la fonction qui affiche le(s) produit(s) sur la page
 ------------------------------------------------------------------------*/
-function displayBasket(basket) {
+async function displayBasket() {
   // on vérifie d'abord si il existe un basket et si il contient des products
   if (basket === null || basket.length === 0) {
     // si il est vide on affiche un message pour informer l'utilisateur
     document.querySelector('h1').textContent = 'Votre panier est vide';
-  } else {
-    // on boucle pour afficher dans le DOM les products présents dans le basket
-    for (product of basket) {
-      //.innerHTML injecte le nouveau contenu dans le DOM
-      document.getElementById('cart__items').innerHTML +=
-        `<article class="cart__item" data-id="${product.id}" data-color="${product.color}">
+    // sinon on regarde ce qu'il y a dans le LS
+  } else for (let i = 0; i < basket.length; i++) {
+    let item = basket[i];
+    //console.table(basket);
+
+    productData = await getDatas(item.id);
+    //console.log(productData);
+
+    //.innerHTML injecte le nouveau contenu dans le DOM
+    document.getElementById('cart__items').innerHTML +=
+      `<article class="cart__item" data-id="${item.id}" data-color="${item.color}">
           <div class="cart__item__img">
-            <img src="${product.img}" alt="${product.altTxt}">
+            <img src="${productData.imageUrl}" alt="${productData.altTxt}">
           </div>
           <div class="cart__item__content">
             <div class="cart__item__content__description">
-              <h2>${product.name}</h2>
-              <p>${product.color}</p>
-              <p>${product.price}€</p>
+              <h2>${productData.name}</h2>
+              <p>${item.color}</p>
+              <p>${productData.price}€</p>
             </div>
             <div class="cart__item__content__settings">
               <div class="cart__item__content__settings__quantity">
                 <p>Qté : </p>
-                <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.quantity}">
+                <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${item.quantity}">
               </div>
               <div class="cart__item__content__settings__delete">
                 <p class="deleteItem">Supprimer</p>
               </div>
             </div>
           </div>
-        </article>`
+        </article>`;
 
-      // on push les infos dans products[]
-      products.push(product.id);
-      console.log(products);
-    }
-    // on affiche la quantité totale grâce à la fonction totalQuantity()
-    document.getElementById('totalQuantity').innerHTML = totalQuantity();
-    // on affiche le prix total grâce à la fonction totalPrice()
-    document.getElementById('totalPrice').innerHTML = totalPrice();
+    // on push les infos dans products[]
+    products.push(item.id);
+    //console.log(products);
 
     // on met à jour le LS avec la fonction adéquate
     updateLocalStorage();
+    // appel de la fonction pour ajouter des produits
+    addProducts();
+    // appel de la fonction pour supprimer des produits
+    deleteProducts();
   }
 }
-/*-------------------------------------------------------
-    Création de la fonction qui récupère les prix
-      des articles et calcule la somme totale
---------------------------------------------------------*/
-function totalPrice() {
-  //console.log(basket);
-  let foundPrices = basket.map((element) => element.totalPrice);
-  console.log(foundPrices);
-
-  const reducer = (previousValue, currentValue) => previousValue + currentValue;
-  // reduce() traite chaque valeur d'une liste (gauche -> droite) afin de la réduire à une seule valeur
-  let sumPrices = foundPrices.reduce(reducer);
-  console.log(sumPrices);
-  return sumPrices;
-};
-/*----------------------------------------------------------
-    Création de la fonction qui récupère les quantité de
-      chaque produit et calcule la quantité totale
-----------------------------------------------------------*/
-function totalQuantity() {
-  //console.log(basket);
-  let foundQty = basket.map((element) => element.quantity);
-  console.log(foundQty);
-
-  const reducer = (previousValue, currentValue) => previousValue + currentValue;
-  // reduce() traite chaque valeur d'une liste (gauche -> droite) afin de la réduire à une seule valeur
-  let sumQty = foundQty.reduce(reducer);
-  console.log(sumQty);
-  return sumQty;
-};
+displayBasket();
 /*----------------------------------------------------------
       Création de la fonction qui met à jour le LS
 ----------------------------------------------------------*/
 function updateLocalStorage() {
   localStorage.setItem('basket', JSON.stringify(basket))
 }
+/*---------------------------------------------------------------------
+    Création de la fonction qui récupère les prix et quantités des 
+    articles et calcule la somme totale du prix et de la quantité
+----------------------------------------------------------------------*/
+async function totalQtyAndPrice() {
+  let totalPrice = 0;
+  let totalQty = 0;
+
+  if (basket.length != 0) {
+    for (let j = 0; j < basket.length; j++) {
+      let itemStorage = basket[j];
+      const product = await getDatas(itemStorage.id);
+      totalPrice +=
+        parseInt(itemStorage.quantity) * parseInt(product.price);
+      totalQty += parseInt(itemStorage.quantity);
+    }
+  }
+
+  const finalQty = document.getElementById('totalQuantity');
+  finalQty.innerHTML = totalQty;
+
+  const finalPrice = document.getElementById('totalPrice');
+  finalPrice.innerHTML = totalPrice;
+}
+totalQtyAndPrice();
 /*----------------------------------------------------------
       Création de la fonction qui ajoute des articles
 ----------------------------------------------------------*/
 function addProducts() {
-  let itemQuantity = Array.from(document.querySelectorAll('.itemQuantity'));
-  console.log(itemQuantity)
-  let totalSum = Array.from(document.querySelectorAll("#totalPrice"));
-  console.log(totalSum)
-  let screenQuantity = Array.from(document.querySelectorAll("#totalQuantity"));
-  console.log(screenQuantity)
+  let itemQty = document.querySelectorAll('.itemQuantity');
 
-  let basketAddControl = [];
+  for (let n = 0; n < itemQty.length; n++) {
+    itemQty[n].addEventListener('change', (event) => {
+      event.preventDefault();
 
-  itemQuantity.forEach(function (quantity, i) {
-    quantity.addEventListener('change', (e) => {
-      e.preventDefault();
-      let newArticlePrice = quantity.value * basket[i].price;
-      console.log(quantity.value);
+      let newItemQty = itemQty[n].value;
+      let newTotalQty = document.getElementById('totalQuantity');
 
-      screenQuantity[i].textContent = quantity.value;
-      basket[i].quantity = parseInt(quantity.value, 10);
+      const newLS = {
+        id: basket[n].id,
+        img: basket[n].img,
+        name: basket[n].name,
+        color: basket[n].color,
+        quantity: parseInt(newItemQty),
+      };
 
-      totalSum[i].textContent = newArticlePrice;
-      basket[i].totalPrice = newArticlePrice;
+      if (newItemQty > 100) {
+        alert('Trop de produits');
+        return;
+      }
 
-      basketAddControl.push(newArticlePrice);
-      basketAddControl = basket;
-      basket = localStorage.setItem("basket", JSON.stringify(basketAddControl));
+      if (newItemQty <= 0) {
+        alert('Quantité non valide');
+        return;
+      }
 
-      //totalQuantity();
-      //totalPrice();
+      basket[n] = newLS;
+      localStorage.setItem('basket', JSON.stringify(basket));
+
+      newTotalQty.innerHTML = totalQtyAndPrice();
     });
-  });
+  }
 }
-addProducts();
 /*----------------------------------------------------------
       Création de la fonction qui supprime des articles
 ----------------------------------------------------------*/
 function deleteProducts() {
   // on récupère les btns supprimer qui existent dans le DOM et on transforme ça en tableau grâce à Array.from()
   let deleteBtn = Array.from(document.querySelectorAll('.deleteItem'))
-  console.log(deleteBtn)
+  //console.log(deleteBtn)
 
   // on crée un tableau vide pour récupérer le basket existant et contrôler les suppressions d'articles
   let basketControlDelete = [];
@@ -159,11 +172,10 @@ function deleteProducts() {
     });
   }
 }
-deleteProducts();
-/*---------------------------------------
-          GESTION DU FORMULAIRE
----------------------------------------*/
-// on vient cibler le btn commander du formulaire
+/***************************************************************
+      GESTION DU FORMULAIRE / REGEX / REQUETE SERVEUR POST
+****************************************************************/
+// on vient cibler le btn 'commander' du formulaire
 const orderBtn = document.getElementById('order');
 //console.log(orderBtn)
 
@@ -181,7 +193,7 @@ orderBtn.addEventListener('click', (e) => {
   };
   //console.log(contact)
 
-  // REGEX pour contrôler la validité des champs firstName + lastName
+  // REGEX pour contrôler la validité des champs firstName + lastName + city
   const regNamesAndCity = (value) => {
     return /^[A-Za-z][A-Za-z\é\è\ê\ë\ï\œ\-\s]+$/.test(value);
   };
@@ -196,90 +208,86 @@ orderBtn.addEventListener('click', (e) => {
     return /^[_a-z0-9-]+(.[_a-z0-9-]+)*@[a-z0-9-]+(.[a-z0-9-]+)*(.[a-z]{2,4})$/.test(value);
   }
 
+  // fonction de contrôle des valeurs de firstName
   function controlFirstName() {
     // on récupère la valeur de l'input
     const firstName = contact.firstName;
-    // on cible l'input afin de changer son apparence
-    let inputFirstName = document.getElementById('firstName');
+    // on cible la place du message d'erreur dans le DOM
+    let errorFirstName = document.getElementById('firstNameErrorMsg');
     // si firstName répond aux attentes OK...sinon ERROR
     if (regNamesAndCity(firstName)) {
-      inputFirstName.style.backgroundColor = "green";
-      document.getElementById('firstNameErrorMsg').textContent = "";
       return true;
     } else {
-      inputFirstName.style.backgroundColor = "red";
-      document.getElementById('firstNameErrorMsg').textContent = "Champ invalide. Ex: Mélanie";
+      errorFirstName.textContent = "Champ invalide. Ex: Adélaïde";
       return false;
+      /* UTILISER .CLOSEST() AVEC UN ADDEVENTLISTENER AU CLICK SUR LE PROCHAIN INPUT POUR AFFICHER DE SUITE UN MESSAGE D'ERREUR */
     }
   }
+  controlFirstName();
 
+  // fonction de contrôle des valeurs de lastName
   function controlLastName() {
     // on récupère la valeur de l'input
     const lastName = contact.lastName;
-    // on cible l'input afin de changer son apparence
-    let inputLastName = document.getElementById('lastName');
+    // on cible la place du message d'erreur dans le DOM
+    let errorLastName = document.getElementById('lastNameErrorMsg');
     // si lastName répond aux attentes OK...sinon ERROR
     if (regNamesAndCity(lastName)) {
-      inputLastName.style.backgroundColor = "green";
-      document.getElementById('lastNameErrorMsg').textContent = "";
       return true;
     } else {
-      inputLastName.style.backgroundColor = 'red';
-      document.getElementById('lastNameErrorMsg').textContent = "Champ invalide. Ex: Morey";
+      errorLastName.textContent = "Champ invalide. Ex: Morey";
       return false;
     }
   }
+  controlLastName();
 
+  // fonction de contrôle des valeurs de address
   function controlAddress() {
     // on récupère la valeur de l'input
     const address = contact.address;
-    // on cible l'input afin de changer son apparence
-    let inputAddress = document.getElementById('address');
+    // on cible la place du message d'erreur dans le DOM
+    let errorAddress = document.getElementById('addressErrorMsg');
     // si address répond aux attentes OK...sinon ERROR
     if (regAddress(address)) {
-      inputAddress.style.backgroundColor = "green";
-      document.getElementById('addressErrorMsg').textContent = "";
       return true;
     } else {
-      inputAddress.style.backgroundColor = 'red';
-      document.getElementById('addressErrorMsg').textContent = "Champ invalide. Ex: 44 avenue Montblanc";
+      errorAddress.textContent = "Champ invalide. Ex: 44 avenue Montblanc";
       return false;
     }
   }
+  controlAddress();
 
+  // fonction de contrôle des valeurs de city
   function controlCity() {
     // on récupère la valeur de l'input
     const city = contact.city;
-    // on cible l'input afin de changer son apparence
-    let inputCity = document.getElementById('city');
+    // on cible la place du message d'erreur dans le DOM
+    let errorCity = document.getElementById('cityErrorMsg');
     // si city répond aux attentes OK...sinon ERROR
     if (regNamesAndCity(city)) {
-      inputCity.style.backgroundColor = "green";
-      document.getElementById('cityErrorMsg').textContent = "";
       return true;
     } else {
-      inputCity.style.backgroundColor = 'red';
-      document.getElementById('cityErrorMsg').textContent = "Champ invalide. Ex: Lyon";
+      errorCity.textContent = "Champ invalide. Ex: Lyon";
       return false;
     }
   }
+  controlCity();
 
+  // fonction de contrôle des valeurs de email
   function controlEmail() {
     // on récupère la valeur de l'input
     const email = contact.email;
-    // on cible l'input afin de changer son apparence
-    let inputEmail = document.getElementById('email');
+    // on cible la place du message d'erreur dans le DOM
+    let errorEmail = document.getElementById('emailErrorMsg');
     // si email répond aux attentes OK...sinon ERROR
     if (regEmail(email)) {
-      inputEmail.style.backgroundColor = "green";
-      document.getElementById('emailErrorMsg').textContent = "";
       return true;
     } else {
-      inputEmail.style.backgroundColor = "red";
-      document.getElementById('emailErrorMsg').textContent = "Champ invalide. Ex: johndoe@contact.com";
+      errorEmail.textContent = "Champ invalide. Ex: johndoe@contact.com";
       return false;
     }
   }
+  controlEmail();
 
   // on vérifie que le panier n'est pas vide et la validité du formulaire afin de stocker les données de l'utilisateur dans le LS
   if (
@@ -293,13 +301,14 @@ orderBtn.addEventListener('click', (e) => {
     localStorage.setItem('contact', JSON.stringify(contact));
     // on appelle la fonction qui envoie les données au serveur
     sendToServer();
-  } else {
+  } /*else {
     // si toutes les conditions ne sont pas remplies on alerte l'utilisateur
     alert('Formulaire incorrect. Veuillez le remplir à nouveau.');
-  }
-  /*----------------------------------------------------------------
-      Création de la fonction qui envoie les données au serveur
-  ----------------------------------------------------------------*/
+  }*/ // ----------> ICI !!!!!!!!
+  /*------------------------------------------------------
+      Création de la fonction qui envoie les données
+          au serveur avec la méthode POST
+  -------------------------------------------------------*/
   function sendToServer() {
     fetch('http://localhost:3000/api/products/order', {
       method: 'POST',
@@ -315,7 +324,7 @@ orderBtn.addEventListener('click', (e) => {
       .then((server) => {
         const orderId = server.orderId;
         console.log(orderId);
-        // si orderId n'est pas undefined on redirige l'utilisateur
+        // si orderId n'est pas undefined on redirige l'utilisateur vers la page confirmation
         if (orderId != undefined) {
           location.href = 'confirmation.html?id=' + orderId;
         }
@@ -324,7 +333,7 @@ orderBtn.addEventListener('click', (e) => {
 });
 
 let formDatas = JSON.parse(localStorage.getItem('contact'));
-console.log(formDatas)
+//console.log(formDatas)
 
 if (formDatas) {
   document.getElementById('firstName').value = formDatas.firstName;
@@ -333,5 +342,5 @@ if (formDatas) {
   document.getElementById('city').value = formDatas.city;
   document.getElementById('email').value = formDatas.email;
 } else {
-  console.log('Le formulaire est vide!')
+  //console.log('Le formulaire est vide!')
 }
