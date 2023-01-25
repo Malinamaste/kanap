@@ -17,7 +17,6 @@ function getDatas(productId) {
   //console.log(response)
   return response;
 }
-
 /*-----------------------------------------------------------------------
     Création de la fonction qui affiche le(s) produit(s) sur la page
 ------------------------------------------------------------------------*/
@@ -179,158 +178,92 @@ function deleteProducts() {
 const orderBtn = document.getElementById('order');
 //console.log(orderBtn)
 
+const validationForm = {
+  firstName: {
+    element: document.getElementById('firstName'),
+    regex: /^[A-Za-z][A-Za-z\é\è\ê\ë\ï\œ\-\s]+$/,
+    errorMsg: 'Prénom invalide'
+  },
+  lastName: {
+    element: document.getElementById('lastName'),
+    regex: /^[A-Za-z][A-Za-z\é\è\ê\ë\ï\œ\-\s]+$/,
+    errorMsg: 'Nom invalide'
+  },
+  address: {
+    element: document.getElementById('address'),
+    regex: /^[a-zA-Z0-9.,-_ ]{5,50}[ ]{0,2}$/,
+    errorMsg: 'Adresse invalide'
+  },
+  city: {
+    element: document.getElementById('city'),
+    regex: /^[A-Za-z][A-Za-z\é\è\ê\ë\ï\œ\-\s]+$/,
+    errorMsg: 'Ville invalide'
+  },
+  email: {
+    element: document.getElementById('email'),
+    regex: /^[_a-z0-9-]+(.[_a-z0-9-]+)*@[a-z0-9-]+(.[a-z0-9-]+)*(.[a-z]{2,4})$/,
+    errorMsg: 'Email invalide'
+  }
+};
+
+const firstNameInput = document.getElementById('firstName');
+firstNameInput.addEventListener('change', () => checkInput(validationForm.firstName));
+
+const lastNameInput = document.getElementById('lastName');
+lastNameInput.addEventListener('change', () => checkInput(validationForm.lastName));
+
+const addressInput = document.getElementById('address');
+addressInput.addEventListener('change', () => checkInput(validationForm.address));
+
+const cityInput = document.getElementById('city');
+cityInput.addEventListener('change', () => checkInput(validationForm.city));
+
+const emailInput = document.getElementById('email');
+emailInput.addEventListener('change', () => checkInput(validationForm.email));
+
+function checkInput(input) {
+  const inputElement = input.element;
+  const inputRegex = input.regex;
+  const errorMsg = input.errorMsg;
+  const errorDiv = input.element.nextElementSibling;
+  const isRegexValid = inputRegex.test(inputElement.value);
+
+  if (isRegexValid) {
+    errorDiv.innerText = '';
+  } else {
+    errorDiv.innerText = errorMsg;
+  }
+  return isRegexValid;
+}
+
 // on écoute l'event au click de orderBtn pour contrôler, récupérer les informations et les envoyer plus tard
 orderBtn.addEventListener('click', (e) => {
   e.preventDefault();
 
-  // on crée un objet qui stocke les données entrées par l'utilisateur
   let contact = {
-    firstName: document.getElementById('firstName').value,
-    lastName: document.getElementById('lastName').value,
-    address: document.getElementById('address').value,
-    city: document.getElementById('city').value,
-    email: document.getElementById('email').value
+    firstName: firstNameInput.value,
+    lastName: lastNameInput.value,
+    address: addressInput.value,
+    city: cityInput.value,
+    email: emailInput.value
   };
-  //console.log(contact)
-
-  // REGEX pour contrôler la validité des champs firstName + lastName + city
-  const regNamesAndCity = (value) => {
-    return /^[A-Za-z][A-Za-z\é\è\ê\ë\ï\œ\-\s]+$/.test(value);
-  };
-
-  // REGEX pour contrôler la validité du champ address
-  const regAddress = (value) => {
-    return /^[a-zA-Z0-9.,-_ ]{5,50}[ ]{0,2}$/.test(value);
-  };
-
-  // REGEX pour contrôler la validité du champ email
-  const regEmail = (value) => {
-    return /^[_a-z0-9-]+(.[_a-z0-9-]+)*@[a-z0-9-]+(.[a-z0-9-]+)*(.[a-z]{2,4})$/.test(value);
-  }
-
-  // fonction de contrôle des valeurs de firstName
-  /*function controlFirstName() {
-    // on récupère la valeur de l'input
-    const firstName = contact.firstName;
-    // on cible la place du message d'erreur dans le DOM
-    let errorFirstName = document.getElementById('firstNameErrorMsg');
-    // si firstName répond aux attentes OK...sinon ERROR
-    if (regNamesAndCity(firstName)) {
-      return true;
-    } else {
-      errorFirstName.textContent = "Champ invalide. Ex: Adélaïde";
-      return false;
-    }
-  }
-  controlFirstName();*/
-
-  /* UTILISER .CLOSEST() AVEC UN ADDEVENTLISTENER AU CLICK SUR LE PROCHAIN INPUT POUR AFFICHER DE SUITE UN MESSAGE D'ERREUR */
-  function controlFirstName() {
-    // on récupère la valeur de l'input
-    const firstName = contact.firstName;
-    // on cible la place du message d'erreur dans le DOM
-    let errorFirstName = document.getElementById('firstNameErrorMsg');
-    //
-    let zoneFirstName = document.getElementById('firstName');
-    //
-    let nextInput = zoneFirstName.closest('#');
-    console.log(nextInput);
-    // si firstName répond aux attentes OK...sinon ERROR
-    if (regNamesAndCity(firstName)) {
-      return true;
-    } else {
-      zoneFirstName.addEventListener('input', (e) => {
-        errorFirstName.textContent = "Champ invalide. Ex: Adélaïde";
-        return false;
-      })
-    }
-  }
-  controlFirstName();
-  /* UTILISER .CLOSEST() AVEC UN ADDEVENTLISTENER AU CLICK SUR LE PROCHAIN INPUT POUR AFFICHER DE SUITE UN MESSAGE D'ERREUR */
-
-  // fonction de contrôle des valeurs de lastName
-  function controlLastName() {
-    // on récupère la valeur de l'input
-    const lastName = contact.lastName;
-    // on cible la place du message d'erreur dans le DOM
-    let errorLastName = document.getElementById('lastNameErrorMsg');
-    // si lastName répond aux attentes OK...sinon ERROR
-    if (regNamesAndCity(lastName)) {
-      return true;
-    } else {
-      errorLastName.textContent = "Champ invalide. Ex: Morey";
-      return false;
-    }
-  }
-  controlLastName();
-
-  // fonction de contrôle des valeurs de address
-  function controlAddress() {
-    // on récupère la valeur de l'input
-    const address = contact.address;
-    // on cible la place du message d'erreur dans le DOM
-    let errorAddress = document.getElementById('addressErrorMsg');
-    // si address répond aux attentes OK...sinon ERROR
-    if (regAddress(address)) {
-      return true;
-    } else {
-      errorAddress.textContent = "Champ invalide. Ex: 44 avenue Montblanc";
-      return false;
-    }
-  }
-  controlAddress();
-
-  // fonction de contrôle des valeurs de city
-  function controlCity() {
-    // on récupère la valeur de l'input
-    const city = contact.city;
-    // on cible la place du message d'erreur dans le DOM
-    let errorCity = document.getElementById('cityErrorMsg');
-    // si city répond aux attentes OK...sinon ERROR
-    if (regNamesAndCity(city)) {
-      return true;
-    } else {
-      errorCity.textContent = "Champ invalide. Ex: Lyon";
-      return false;
-    }
-  }
-  controlCity();
-
-  // fonction de contrôle des valeurs de email
-  function controlEmail() {
-    // on récupère la valeur de l'input
-    const email = contact.email;
-    // on cible la place du message d'erreur dans le DOM
-    let errorEmail = document.getElementById('emailErrorMsg');
-    // si email répond aux attentes OK...sinon ERROR
-    if (regEmail(email)) {
-      return true;
-    } else {
-      errorEmail.textContent = "Champ invalide. Ex: johndoe@contact.com";
-      return false;
-    }
-  }
-  controlEmail();
 
   // on vérifie que le panier n'est pas vide et la validité du formulaire afin de stocker les données de l'utilisateur dans le LS
   if (
-    controlFirstName() &&
-    controlLastName() &&
-    controlAddress() &&
-    controlCity() &&
-    controlEmail()
+    checkInput(validationForm.firstName) &&
+    checkInput(validationForm.lastName) &&
+    checkInput(validationForm.address) &&
+    checkInput(validationForm.city) &&
+    checkInput(validationForm.email)
   ) {
     // on enregistre le formulaire dans le LS
     localStorage.setItem('contact', JSON.stringify(contact));
     // on appelle la fonction qui envoie les données au serveur
     sendToServer();
-  } /*else {
-    // si toutes les conditions ne sont pas remplies on alerte l'utilisateur
-    alert('Formulaire incorrect. Veuillez le remplir à nouveau.');
-  }*/ // ----------> ICI !!!!!!!!
+  }
   /*------------------------------------------------------
       Création de la fonction qui envoie les données
-          au serveur avec la méthode POST
+            au serveur avec la méthode POST
   -------------------------------------------------------*/
   function sendToServer() {
     fetch('http://localhost:3000/api/products/order', {
