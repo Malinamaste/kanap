@@ -209,7 +209,7 @@ orderBtn.addEventListener('click', (e) => {
   }
 
   // fonction de contrôle des valeurs de firstName
-  function controlFirstName() {
+  /*function controlFirstName() {
     // on récupère la valeur de l'input
     const firstName = contact.firstName;
     // on cible la place du message d'erreur dans le DOM
@@ -220,10 +220,33 @@ orderBtn.addEventListener('click', (e) => {
     } else {
       errorFirstName.textContent = "Champ invalide. Ex: Adélaïde";
       return false;
-      /* UTILISER .CLOSEST() AVEC UN ADDEVENTLISTENER AU CLICK SUR LE PROCHAIN INPUT POUR AFFICHER DE SUITE UN MESSAGE D'ERREUR */
+    }
+  }
+  controlFirstName();*/
+
+  /* UTILISER .CLOSEST() AVEC UN ADDEVENTLISTENER AU CLICK SUR LE PROCHAIN INPUT POUR AFFICHER DE SUITE UN MESSAGE D'ERREUR */
+  function controlFirstName() {
+    // on récupère la valeur de l'input
+    const firstName = contact.firstName;
+    // on cible la place du message d'erreur dans le DOM
+    let errorFirstName = document.getElementById('firstNameErrorMsg');
+    //
+    let zoneFirstName = document.getElementById('firstName');
+    //
+    let nextInput = zoneFirstName.closest('#');
+    console.log(nextInput);
+    // si firstName répond aux attentes OK...sinon ERROR
+    if (regNamesAndCity(firstName)) {
+      return true;
+    } else {
+      zoneFirstName.addEventListener('input', (e) => {
+        errorFirstName.textContent = "Champ invalide. Ex: Adélaïde";
+        return false;
+      })
     }
   }
   controlFirstName();
+  /* UTILISER .CLOSEST() AVEC UN ADDEVENTLISTENER AU CLICK SUR LE PROCHAIN INPUT POUR AFFICHER DE SUITE UN MESSAGE D'ERREUR */
 
   // fonction de contrôle des valeurs de lastName
   function controlLastName() {
