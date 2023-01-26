@@ -6,10 +6,7 @@ function getProductId() {
 }
 
 const orderId = getProductId();
-console.log(orderId);
-
-//const basket = JSON.parse(localStorage.getItem('basket'));
-//console.log(basket);
+//console.log(orderId);
 
 // on cible l'élément dans le DOM pour lui injecter plus tard une valeur
 const confirmation = document.getElementById('orderId');
