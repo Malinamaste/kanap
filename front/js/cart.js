@@ -13,7 +13,11 @@ function getDatas(productId) {
   response = fetch('http://localhost:3000/api/products/' + productId)
     .then(data => {
       return data.json();
-    });
+    })
+    .catch(error => {
+      error = `Une erreur s'est produite au chargement de la page, veuillez réessayer.`;
+      alert(error);
+    })
   //console.log(response)
   return response;
 }

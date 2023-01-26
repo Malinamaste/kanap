@@ -34,7 +34,8 @@ function getProduct(productId) {
             return product
         })
         .catch(function (error) {
-            alert(error)
+            error = `Une erreur s'est produite au chargement de la page, veuillez réessayer.`;
+            alert(error);
         })
 }
 /*----------------------------------------------------------------
@@ -71,7 +72,7 @@ function addToCart(product) {
 
         // on vérifie que la color et qty sont conformes aux attentes
         if (color == undefined || color === "" || qty < 1 || qty > 100 || qty === undefined) {
-            alert(`Veuillez sélectionner une couleur et/ou une quantité.`);
+            alert(`Veuillez sélectionner une couleur et/ou une quantité valide.`);
         } else {
             // on stocke les valeurs du produit choisit dans un objet
             let choosenProduct = {
@@ -116,7 +117,7 @@ function addToCart(product) {
                 localStorage.setItem("basket", JSON.stringify(newBasketLS));
             }
             document.getElementById('addToCart').textContent = 'Produit ajouté!';
-            //window.location.href = "cart.html" ?
+            window.location.href = "cart.html";
         }
     })
 }

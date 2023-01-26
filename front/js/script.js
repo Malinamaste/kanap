@@ -30,7 +30,8 @@ function getProducts() {
         })
         // au cas où l'API serait down
         .catch(function (error) {
-            alert(error)
+            error = `Une erreur s'est produite au chargement des produits, veuillez rafraîchir la page.`;
+            alert(error);
         })
 }
 /*------------------------------------------------------
