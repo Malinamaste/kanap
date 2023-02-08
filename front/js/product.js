@@ -105,18 +105,24 @@ function addToCart(product) {
                     item.quantity = newItemQty;
 
                     localStorage.setItem("basket", JSON.stringify(localStorageBasket));
+
+                    document.getElementById('addToCart').textContent = 'Produit ajouté !';
+                    window.location.href = "cart.html";
                     return;
                 }
+
                 // si le produit n'existe pas déjà dans le LS on le push
                 localStorageBasket.push(choosenProduct);
                 localStorage.setItem("basket", JSON.stringify(localStorageBasket));
+
             } else {
                 //  sinon on crée un nouveau tableau dans lequel on push choosenProduct
                 let newBasketLS = [];
                 newBasketLS.push(choosenProduct);
                 localStorage.setItem("basket", JSON.stringify(newBasketLS));
             }
-            document.getElementById('addToCart').textContent = 'Produit ajouté!';
+
+            document.getElementById('addToCart').textContent = 'Produit ajouté !';
             window.location.href = "cart.html";
         }
     })

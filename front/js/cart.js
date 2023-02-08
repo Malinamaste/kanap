@@ -253,7 +253,7 @@ orderBtn.addEventListener('click', (e) => {
   };
 
   // on vérifie que le panier n'est pas vide et la validité du formulaire afin de stocker les données de l'utilisateur dans le LS
-  if (basket == null || basket.length == 0) {
+  /*if (basket == null || basket.length == 0) {
     alert(`Votre panier est vide`);
   } else if (
     checkInput(validationForm.firstName) == false &&
@@ -264,6 +264,31 @@ orderBtn.addEventListener('click', (e) => {
   ) {
     alert(`Le formulaire est incorrect.`);
   } else {
+    // on enregistre le formulaire dans le LS
+    localStorage.setItem('contact', JSON.stringify(contact));
+    // on appelle la fonction qui envoie les données au serveur
+    sendToServer();
+  }*/
+  if (basket == null || basket.length == 0) {
+    alert(`Votre panier est vide`);
+  }
+  if (
+    checkInput(validationForm.firstName) == false &&
+    checkInput(validationForm.lastName) == false &&
+    checkInput(validationForm.address) == false &&
+    checkInput(validationForm.city) == false &&
+    checkInput(validationForm.email) == false
+  ) {
+    alert(`Le formulaire est incorrect.`);
+  }
+  if (
+    basket.length > 0 &&
+    checkInput(validationForm.firstName) &&
+    checkInput(validationForm.lastName) &&
+    checkInput(validationForm.address) &&
+    checkInput(validationForm.city) &&
+    checkInput(validationForm.email)
+  ) {
     // on enregistre le formulaire dans le LS
     localStorage.setItem('contact', JSON.stringify(contact));
     // on appelle la fonction qui envoie les données au serveur
