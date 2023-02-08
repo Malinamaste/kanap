@@ -205,7 +205,8 @@ const validationForm = {
   },
   email: {
     element: document.getElementById('email'),
-    regex: /^[_a-z0-9-]+(.[_a-z0-9-]+)*@[a-z0-9-]+(.[a-z0-9-]+)*(.[a-z]{2,4})$/,
+    //regex: /^[_a-z0-9-]+(.[_a-z0-9-]+)*@[a-z0-9-]+(.[a-z0-9-]+)*(.[a-z]{2,4})$/,
+    regex: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
     errorMsg: 'Email invalide'
   }
 };
